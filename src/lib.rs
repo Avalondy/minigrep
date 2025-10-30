@@ -1,6 +1,6 @@
+use std::env;
 use std::error::Error;
 use std::fs;
-use std::env;
 
 pub struct Config {
     pub query: String,
@@ -9,20 +9,12 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(
-        mut args: impl Iterator<Item = String>
-    ) -> Result<Config, &'static str> {
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
         args.next();
 
-        let query = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a query string"),
-        };
+        let query = args.next().ok_or("Didn't get a query string")?;
 
-        let file_path = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Didn't get a file path"),
-        };
+        let file_path = args.next().ok_or("Didn't get a file path")?;
 
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
